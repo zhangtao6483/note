@@ -7,7 +7,7 @@
 
 
 # 1.  MySql逻辑架构
-![Alt text](./https://github.com/zhangtao6483/note/blob/master/img/mysql/1.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/1.png)
 第一层的服务包含连接管理、授权认证、安全等等
 第二次架构是MySql核心服务功能，包括查询解析、分析、优化、缓存以及所有的内置函数（例如，日期、时间、数学和加密函数），所有跨存储引擎的功能都在这一层实现：存储过程、触发器、试图等。
 第三次包含了存储引擎。存储引擎负责MySql中数据的存储和提取。服务器通过API与存储引擎进行通信。这些接口屏蔽了不同存储引擎之间的差异，使得这些差异对上层的查询过程透明。存储引擎不会去解析sql，不同的存储引擎之间也不会互相通信，而只是简单地响应上层服务器请求。
@@ -37,8 +37,8 @@ MySql会解析查询，并创建内部数据结构（解析树），然后对其
 一旦事务提交，则其所做的修改就会永久保存到数据库中。此时即使系统崩溃，修改的数据也不会丢失。
 
 ##3.1 隔离级别
-![Alt text](./隔离级别.png)
-![Alt text](./隔离界别2.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/2.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/3.png)
 
 ##3.2 死锁
 ##3.3 事务日志
@@ -77,7 +77,7 @@ TIMESTAMP显示的值也依赖于时区
 #5 索引
 ##5.1 索引的类型
 **B-Tree索引**
-![Alt text](./b-tree.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/4.png)
 **哈希索引**
 只有Memory引擎显示支持哈希索引
 InnoDB引擎有一个特殊的功能叫“自适应哈希索引（adaptive hash index）”当InnoDB注意到某些索引值被使用的非常频繁时，它会在内存中基于B-Tree索引之上再创建一个哈希索引
@@ -121,12 +121,12 @@ MyISAM表支持空间索引，可用作地理数据存储
 		- 聚簇索引可能导致全表扫描变慢，尤其是行比较稀疏，或者由于页分裂导致数据数据存储不连续的时候
 		- 二级索引可能比想象的要更大
 
-![Alt text](./聚簇.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/5.png)
 
 6. 覆盖索引
 
 ##5.5 总结
-![Alt text](./suoy.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/6.png)
 
 
 #6 查询性能优化
@@ -187,11 +187,11 @@ SELECT * FROM tag WHERE tag='mysql';
 SELECT * FROM tag_post WHERE tag_id=1234;
 SELECT * FROM post WHERE post.id in (123,456,789);
 ```
-![Alt text](./fenjie.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/7.png)
 
 ##6.3 查询执行的基础
-![Alt text](./chaxun.png)
-![Alt text](./guoc.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/8.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/9.png)
 ###6.3.1 MySql客户端/服务器通信协议
 MySql客户端和服务器之间通行协议是“半双工”的，这意味着，在任何一个时刻，要么是由服务器向客户端发送数据，要么是由客户端向服务器发送数据，这两个动作不能同时发送。
 ###6.3.2 查询缓存
