@@ -225,4 +225,54 @@ SELECT film.* FROM sakila.flim INNER JOIN sakila.film_actor USING(film_id) WHERE
 ```sql
 (SELECT first_name, last_name FROM sakila.actor ORDER BY last_name LIMIT 20) UNION ALL (SELECT first_name, last_name FROM sakila.customer ORDER BY last_name LIMIT 20) LIMIT 20
 ```
+###6.4.3 索引合并优化
+当WHERE子句中包含多个复杂条件的时候，MySql能够访问单个表的多个索引以合并和交叉过滤的方式来定位需要查找的行
+###6.4.4 并行执行
+MySql无法利用多核特性来并行执行查询
+###6.4.5 最大值和最小值优化
+```sql
+SELECT MIN(actor_id) FROM sakila.actor WHERE first_name = 'PENELOPE'
+```
+因为在first_name字段上没有索引，MySql将会进行一次全表扫描，如果MySql能够进行主键扫描，那么理论上，当MySql读到第一个满足条件的记录时候，就是我们要的最小值了，因为主键是严格按照actor_id字段的大小顺序排列的。但MySql只会做全表扫描
+一种曲线优化的方法是移除MIN(),然后用LIMIT来查询重写如下
+```sql
+SELECT actor_id FROM sakila.actor USE INDEX(PRIMARY) WHERE first_name = 'PENLOPE' LIMIT 1;
+```
+###6.4.6 在同一个表上查询和更新
+MySql不允许对同一个表同时进行查询和更新
+```sql
+UPDATE tb1 AS outer_tb1 SET cnt = (
+	SELECT count(*) FROM tb1 AS inner_tb1 WHERE innertb1.type = outer_tb1.type
+);
+```
+可以通过生成表的形式来绕过上面的限制，因为MySql只会把这个表当做一个临时表来处理
+```sql
+UPDATE tb1 INNER JOIN (
+	SELECT type, count(*) AS cnt FROM tb1 GROUP BY type
+) AS der USING(type) SET tb1.cnt = der.cnt;
+```
+
+##6.5 优化特定类型的查询
+###6.5.1 优化COUNT()查询
+**COUNT()的作用**
+COUNT()是一个特殊的函数，有两种不同的作用：它可以统计某个列值的数量，也可以统计函数。在统计列值时要求列值是非空的（不统计NULL）。如果在COUNT()的括号中指定了列或者列的表达式，则统计的就是这个表达式有值得结果数
+COUNT()的另一个作用是统计结果集的行数。当MySql确认括号内的表达式值不可能为空时，实际上就是在统计行数。
+###6.5.2 优化关联查询
+- 确保ON或者USING子句中的列上有索引
+- 确保任何的GROUP BY和OEDER BY中的表达式只涉及到一个表中的列
+###6.5.3 优化GROUP BY和DISTINCT
+SQL_BIG_RESULT和SQL_SMALL_RESULT
+###6.5.4 优化LIMIT分页
+优化分页查询一个最简单的办法就是尽可能地使用索引覆盖扫描，而不是查询所有的列。然后根据需要做一次关联操作再返回所需的列
+```sql
+SELECT film_id, description FROM sakila.film ORDER BY title LIMIT 50, 5;
+```
+可以写为
+```sql
+SELECT film.film_id, film.description FROM sakila.film INNER JOIN (
+	SELECT film_id FROM sakila.film ORDER BY title LIMIT 50, 5
+) AS lim USING(film_id);
+```
+这里的“延迟关联”将大大提升查询效率，它让MySql扫描尽可能少的页面，获取需要访问的记录后再根据关联列回原表查询需要的所有列。
+
 
