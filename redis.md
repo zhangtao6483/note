@@ -33,11 +33,11 @@ save 60 10000
 - 相关配置：
 
 	> **rdbcompression yes**
-	保存数据到rdb文件时是否进行压缩，如果不想可以配置成’no’，默认是’yes’，因为压缩可以减少I/O，当然，压缩需要消耗一些cpu资源。
-	**dbfilename dump.rdb**
-	快照文件名
-	**dir ./**
-	快照文件所在的目录，同时也是AOF文件所在的目录
+	> 保存数据到rdb文件时是否进行压缩，如果不想可以配置成’no’，默认是’yes’，因为压缩可以减少I/O，当然，压缩需要消耗一些cpu资源。
+	> **dbfilename dump.rdb**
+	> 快照文件名
+	> **dir ./**
+	> 快照文件所在的目录，同时也是AOF文件所在的目录
 
 ##1.2 AOF
 
@@ -65,19 +65,19 @@ save 60 10000
 
 - 相关配置：
 	> **appendfilename appendonly.aof**
-		指定AOF日志文件名称，默认名称：
-		**appendonly.aof**
-		**appendfsync everysec**
-	什么时候将数据写入disk，redis提供三种模式:
-	no : 不进行fsync，有OS决定数据刷盘的时间粒度，性能高
-	always : 每次写操作都做fsync，安全
-	everysec : 上一个fsync后至少1s，折中
-	**no-appendfsync-on-rewrite no**
-	当Aof log进行重写时，是否写日志时fsync。如果系统遇到latency问题，建议设为yes（rewrite时不强制fsync）
-	**auto-aof-rewrite-percentage 100**
-	当Aof log增长超过指定比例时，重写log file， 设置为0表示不自动重写Aof log
-	**auto-aof-rewrite-min-size 64mb**
-	启动重写Aof log时，Aof log的最小大小
+	>	指定AOF日志文件名称，默认名称：
+	>	**appendonly.aof**
+	>	**appendfsync everysec**
+	> 什么时候将数据写入disk，redis提供三种模式:
+	> no : 不进行fsync，有OS决定数据刷盘的时间粒度，性能高
+	> always : 每次写操作都做fsync，安全
+	> everysec : 上一个fsync后至少1s，折中
+	> **no-appendfsync-on-rewrite no**
+	> 当Aof log进行重写时，是否写日志时fsync。如果系统遇到latency问题，建议设为yes（rewrite时不强制fsync）
+	> **auto-aof-rewrite-percentage 100**
+	> 当Aof log增长超过指定比例时，重写log file， 设置为0表示不自动重写Aof log
+	> **auto-aof-rewrite-min-size 64mb**
+	> 启动重写Aof log时，Aof log的最小大小
 
 #2. Scale
 
@@ -101,17 +101,17 @@ save 60 10000
 - **相关配置：**
 
 	> **slaveof <masterip> <masterport>**
-	表示该redis服务作为slave，masterip和masterport分别为master 的ip和port
-	**masterauth <master-password>**
-	如果master设置了安全密码，则此处设置为相应的密码
-	**slave-serve-stale-data yes**
-	当slave丢失master或者同步正在进行时，如果发生对slave的服务请求：
-	slave-serve-stale-data设置为yes则slave依然正常提供服务
-	slave-serve-stale-data设置为no则slave返回client错误："SYNC with master in progress"
-	**repl-ping-slave-period 10**
-	slave发送PINGS到master的时间间隔
-	**repl-timeout 60**
-	IO超时时间
+	> 表示该redis服务作为slave，masterip和masterport分别为master 的ip和port
+	> **masterauth <master-password>**
+	> 如果master设置了安全密码，则此处设置为相应的密码
+	> **slave-serve-stale-data yes**
+	> 当slave丢失master或者同步正在进行时，如果发生对slave的服务请求：
+	> slave-serve-stale-data设置为yes则slave依然正常提供服务
+	> slave-serve-stale-data设置为no则slave返回client错误："SYNC with master in progress"
+	> **repl-ping-slave-period 10**
+	> slave发送PINGS到master的时间间隔
+	> **repl-timeout 60**
+	> IO超时时间
 
 ##2.2 水平Scale
 
@@ -253,7 +253,8 @@ Redis大型高可用架构
 
 Twemproxy节点扩展，原来的数据需要重新处理分布，避免出现找不到key值；
 扩展Redis节点，数据不会自动均匀分布，而需人工处理。
-5. 参考
+
+# 5. 参考
 
 《Redis设计与实现》
 http://redis.readthedocs.org/en/latest/
