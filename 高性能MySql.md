@@ -107,7 +107,7 @@ MyISAM表支持空间索引，可用作地理数据存储
 	
 5. 聚簇索引
 	聚簇索引不是一种单独的索引类型，而是一种数据存储方式。具体的细节依赖其实现方式，但InnoDB的聚簇索引实际上在同一个结构中保存了B—Tree索引和数据行
-	当表有聚簇索引时，它的数据行实际上存放在索引的叶子页（leaf page）中。“聚簇”表示数据行和相邻的键值紧凑的存储在一起。![Alt text](./聚簇索引.png)
+	当表有聚簇索引时，它的数据行实际上存放在索引的叶子页（leaf page）中。“聚簇”表示数据行和相邻的键值紧凑的存储在一起。![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/5.png)
 	聚簇索引优点：
 		- 可以把相关数据保存在一起。例如实现电子邮件时，可以根据用户ID来聚集数据，这样只需要从磁盘读取少量的数据页就能获取某个用户的全部邮件。如果没有使用聚簇索引，则每封邮件都可能导致一次磁盘I/O
 		- 数据访问更快。聚簇索引将索引和数据保存在同一个B-Tree中，因此从聚簇索引中获取数据通常比非聚簇索引中查找要快
@@ -121,7 +121,7 @@ MyISAM表支持空间索引，可用作地理数据存储
 		- 聚簇索引可能导致全表扫描变慢，尤其是行比较稀疏，或者由于页分裂导致数据数据存储不连续的时候
 		- 二级索引可能比想象的要更大
 
-![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/5.png)
+
 
 6. 覆盖索引
 
@@ -191,7 +191,7 @@ SELECT * FROM post WHERE post.id in (123,456,789);
 
 ##6.3 查询执行的基础
 ![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/8.png)
-![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/9.png)
+
 ###6.3.1 MySql客户端/服务器通信协议
 MySql客户端和服务器之间通行协议是“半双工”的，这意味着，在任何一个时刻，要么是由服务器向客户端发送数据，要么是由客户端向服务器发送数据，这两个动作不能同时发送。
 ###6.3.2 查询缓存
