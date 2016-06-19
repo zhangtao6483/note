@@ -7,7 +7,7 @@
 
 #1 Java内存区域与内存溢出
 ##1.1 内存区域
-![enter image description here](https://en.wikipedia.org/wiki/File:JvmSpec7.png)
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/jvm/JvmSpec7.png)
 
 ###1.1.1 程序计数器（Program Counter Register）
 字节码的行号指示器
