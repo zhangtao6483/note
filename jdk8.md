@@ -1,4 +1,10 @@
+# jdk8新特性
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/jdk/jdk8_0.png)
+
 ## 函数式接口
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/jdk/jdk8_2.png)
 
 ### 1. Predicate
 使用 java.util.function.Predicate 函数式接口以及lambda表达式，可以向API方法添加逻辑，用更少的代码支持更多的动态行为。<br>
@@ -6,26 +12,26 @@ Predicate接口非常适用于做过滤。
 
 ```java
 
-	public static void main(String[] args) {
-		List languages = Arrays.asList("Java", "Scala", "C++", "Haskell", "Lisp");
+public static void main(String[] args) {
+	List languages = Arrays.asList("Java", "Scala", "C++", "Haskell", "Lisp");
 
-		System.out.println("Languages which starts with J :");
-		filter(languages, (str) -> str.startsWith("J"));
+	System.out.println("Languages which starts with J :");
+	filter(languages, (str) -> str.startsWith("J"));
 
-		System.out.println("Print no language : ");
-		filter(languages, (str) -> false);
+	System.out.println("Print no language : ");
+	filter(languages, (str) -> false);
 
-		System.out.println("Print language whose length greater than 4:");
-		filter(languages, (str) -> str.length() > 4);
-	}
+	System.out.println("Print language whose length greater than 4:");
+	filter(languages, (str) -> str.length() > 4);
+}
 
-	public static void filter(List<String> names, Predicate<String> condition) {
-		for (String name : names) {
-			if (condition.test(name)) {
-				System.out.println(name + " ");
-			}
+public static void filter(List<String> names, Predicate<String> condition) {
+	for (String name : names) {
+		if (condition.test(name)) {
+			System.out.println(name + " ");
 		}
 	}
+}
 
 //	Languages which starts with J :
 //	Java
@@ -72,7 +78,7 @@ new Thread( () -> System.out.println("In Java8, Lambda expression rocks !!") ).s
 并行流 stream <br>
 串行流 parallelStream
 
-![]()
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/jdk/jdk8_1.png)
 
 ## 方法引用/构造函数引用
 
@@ -191,6 +197,8 @@ list.forEach(System.out::println);
 
 ## Optional
 
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/jdk/jdk8_3.png)
+
 ## CompletableFuture
 
 ## 新的时间和日期API
@@ -225,3 +233,10 @@ LocalDate date2 = date1.plusWeeks(1); //2014-3-25
 LocalDate date3 = date2.minusYears(3); //2011-3-25
 LocalDate date4 = date3.plus(6, ChronoUnit.MONTHS); //2011-09-25
 ```
+
+---
+
+参考：<br>
+http://www.importnew.com/22417.html<br>
+
+http://listenzhangbin.com/post/2017/01/java8-learning-notes/<br>
