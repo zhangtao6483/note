@@ -305,6 +305,24 @@ LocalDate date3 = date2.minusYears(3); //2011-3-25
 LocalDate date4 = date3.plus(6, ChronoUnit.MONTHS); //2011-09-25
 ```
 
+**LocalDate**
+含有年、月、日
+
+**LocalTime**
+仅含有小时、分钟、秒、纳秒
+
+**LocalDateTime**
+结合了LocalDate和LocalTime
+
+**ZoneDateTime**
+含有时区信息的时间
+
+**Instant**
+
+用long表示从1970-1-1 00:00:00到现在的nanosecond
+Instant.now()// 获取当前时间
+
+
 ---
 
 参考：<br>
