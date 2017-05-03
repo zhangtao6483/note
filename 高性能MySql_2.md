@@ -291,14 +291,141 @@ set global long_query_time=3
 
 #### 3.2.2 mysqldumpslow
 
-得到返回记录集最多的10个SQL
+得到返回记录集最多的10个SQL<br>
 mysqldumpslow -s r -t 10 /var/lib/mysql/log-slow.log
 
-得到访问次数最多的10个SQL
+得到访问次数最多的10个SQL<br>
 mysqldumpslow -s c -t 10 /var/lib/mysql/log-slow.log
 
-得到按照时间排序的前10条里面含有左链接的查询语句
+得到按照时间排序的前10条里面含有左链接的查询语句<br>
 mysqldumpslow -s t -t 10 -g "left join" /var/lib/mysql/log-slow.log
 
-结合 | more 使用
+结合 | more 使用<br>
 mysqldumpslow -s t -t 10 /var/lib/mysql/log-slow.log | more
+
+### 3.3 批量数据脚本
+
+```sql
+DELIMITER $$
+CREATE FUNCTION rand_string(n INT) RETURNS VARCHAR(255)
+BEGIN
+  DECLARE chars_str VARCHAR(100) DEFAULT 'abcdefghijklmnopqrstuvwxvzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  DECLARE return_str VARCHAR(255) DEFAULT '';
+  DECLARE i INT DEFAULT 0;
+  WHILE i < n DO
+    SET return_str = CONCAT(return_str,SUBSTRING(chars_str, FLOOR(1+RAND()*52),1);
+    SET i = i + 1;
+  END WHILE;
+  RETURN return_str
+END $$
+```
+
+```sql
+DELIMITER $$
+CREATE PROCEDURE insert_x(IN START INT(10), IN max_num INT(10))
+BEGIN
+  DECLARE i INT DEFAULT 0;
+  SET autocommit = 0;
+  REPEAT
+    SET i = i + 1;
+    INSERT INTO x (id, cloum) VALUES ((START+i),rand_stirng(6));
+    UNTIL i = max_num;
+   END REPEAT;
+  COMMIT;
+END $$
+```
+
+### 3.4 SHOW PROFILES
+
+- converting HEAP to MyISAM<br>查询结果太大，内存不够用复制到磁盘
+- Create tmp table <br>创建临时表
+- Copying to tmp table on disk <br>把内存中临时表复制到磁盘
+- locked
+
+## 4 锁机制
+
+### 4.1 分类
+
+#### 4.1.1 从对数据操作的类型（读/写）
+
+**读锁（共享锁）**
+<br>针对同一份数据，多个读操作可以同时进行而不会互相影响
+
+**写锁（排它锁）**
+<br>当前写操作没有完成前，它会阻断其他写锁和读锁
+
+#### 4.1.2 从对数据操作的粒度
+
+表锁、行锁
+
+### 4.2 表锁（偏读）
+
+查看加锁表
+
+```sql
+show open tables
+```
+
+**table_locks_waited**<br>出现表级锁定争用而发生等待的次数，此值较高表示发生严重的表级锁争用情况
+
+**table_locks_immediate**<br>产生表级锁定的次数，表示可以立即获取锁的查询次数，每立即获取锁值加1
+
+```sql
+show status like 'table%'
+```
+
+偏向MyISAM存储引擎，开销小，加锁快；无死锁；锁力度大，发生锁冲突的概率高，并发度最低
+
+MyISAM在执行查询操作（SELECT）前，会自动给涉及的所有表加读锁，在执行增删改操作前，会自动给涉及的表加写锁
+
+锁类型  | 可否兼容 | 读锁 | 写锁
+------ | --------| ---- | ----
+读锁    | 是      | 是   | 否
+写锁    | 是      | 否   | 否
+
+### 4.3 行锁（偏写）
+
+偏向InnoDB存储引擎，开销大，加锁慢；会出现死锁；锁粒度最小，发生锁冲突的概率最低，并发度最高
+
+**无索引行锁升级为表锁**
+
+**间隙锁**
+<br>当使用范围条件而不是相等条件检索数据，并请求共享或排它锁时，InnoDB会给符合条件的已有数据记录的索引项加锁，对于键值在条件范围内但并不存在的记录，叫做‘间隙’。
+<br>InnoDB也会对这个间隙加锁
+
+**如何锁定一行**
+
+```sql
+begin;
+
+select * from table where id = :id for update;
+
+commit;
+
+```
+
+**性能监控**
+
+```sql
+show status like 'innodb_row_lock_%';
+
+Innodb_row_lock_current_waits：当前等待锁的数量
+Innodb_row_lock_time：系统启动到现在、锁定的总时间长度
+Innodb_row_lock_time_avg：每次平均锁定的时间
+Innodb_row_lock_time_max：最长一次锁定时间
+Innodb_row_lock_waits：系统启动到现在、总共锁定次数
+```
+
+## 5 主从复制
+
+### 5.1 基本原理
+
+- slave会从master读取binlog来进行数据同步
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/mysql/2_1.png)
+
+- 复制步骤
+	1. master将改变记录到二进制文件（binary log）。这些记录过程叫做二进制日志时间，binary log event
+	2. slave将master的binary log events拷贝到它的中继日志（relay log）
+	3. slave重做中继日志中的事件，将改变应用到自己的数据库中。MySQL复制是异步的且串行化 
+
