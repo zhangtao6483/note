@@ -10,77 +10,77 @@ java 多线程demo
 
 public class Demo1 {
 
-	public static void main(String[] args) {
-		Clerk clerk = new Clerk();
+    public static void main(String[] args) {
+        Clerk clerk = new Clerk();
 
-		Producer pro = new Producer(clerk);
-		Consumer cus = new Consumer(clerk);
+        Producer pro = new Producer(clerk);
+        Consumer cus = new Consumer(clerk);
 
-		new Thread(pro, "生产者A").start();
-		new Thread(cus, "消费者B").start();
+        new Thread(pro, "生产者A").start();
+        new Thread(cus, "消费者B").start();
 
-		new Thread(pro, "生产者C").start();
-		new Thread(cus, "消费者D").start();
-	}
+        new Thread(pro, "生产者C").start();
+        new Thread(cus, "消费者D").start();
+    }
 }
 
 class Clerk {
-	private int product = 0;
+    private int product = 0;
 
-	public synchronized void produce() {
-		while (product >= 10) {
-			System.out.println("产品已满");
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-			}
-		}
-		System.out.println(Thread.currentThread().getName() + ":" + ++product);
-		this.notifyAll();
-	}
+    public synchronized void produce() {
+        while (product >= 10) {
+            System.out.println("产品已满");
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        System.out.println(Thread.currentThread().getName() + ":" + ++product);
+        this.notifyAll();
+    }
 
-	public synchronized void consume() {
-		while (product <= 0) {
-			System.out.println("缺货");
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-			}
-		}
-		System.out.println(Thread.currentThread().getName() + ":" + --product);
-		this.notifyAll();
-	}
+    public synchronized void consume() {
+        while (product <= 0) {
+            System.out.println("缺货");
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        System.out.println(Thread.currentThread().getName() + ":" + --product);
+        this.notifyAll();
+    }
 }
 
 
 class Producer implements Runnable {
-	private Clerk clerk;
+    private Clerk clerk;
 
-	public Producer(Clerk clerk) {
-		this.clerk = clerk;
-	}
+    public Producer(Clerk clerk) {
+        this.clerk = clerk;
+    }
 
-	@Override
-	public void run() {
-		for (int i = 0; i < 10; i++) {
-			clerk.produce();
-		}
-	}
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            clerk.produce();
+        }
+    }
 }
 
 class Consumer implements Runnable {
-	private Clerk clerk;
+    private Clerk clerk;
 
-	public Consumer(Clerk clerk) {
-		this.clerk = clerk;
-	}
+    public Consumer(Clerk clerk) {
+        this.clerk = clerk;
+    }
 
-	@Override
-	public void run() {
-		for (int i = 0; i < 10; i++) {
-			clerk.consume();
-		}
-	}
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            clerk.consume();
+        }
+    }
 }
 ```
 
@@ -88,71 +88,71 @@ class Consumer implements Runnable {
 
 ```sql
 class Clerk {
-	private Lock lock = new ReentrantLock();
-	private Condition condition = lock.newCondition();
+    private Lock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition();
 
-	private int product = 0;
+    private int product = 0;
 
-	public void produce() {
-		lock.lock();
-		try {
-			while (product >= 10) {
-				condition.await();
-				System.out.println("产品已满");
-			}
-			System.out.println(Thread.currentThread().getName() + ":" + ++product);
-			condition.signalAll();
-		} catch (InterruptedException e) {
-		} finally {
-			lock.unlock();
-		}
-	}
+    public void produce() {
+        lock.lock();
+        try {
+            while (product >= 10) {
+                condition.await();
+                System.out.println("产品已满");
+            }
+            System.out.println(Thread.currentThread().getName() + ":" + ++product);
+            condition.signalAll();
+        } catch (InterruptedException e) {
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public synchronized void consume() {
-		lock.lock();
-		try {
-			while (product <= 0) {
-				condition.await();
-				System.out.println("缺货");
-			}
-			System.out.println(Thread.currentThread().getName() + ":" + --product);
-			condition.signalAll();
-		} catch (InterruptedException e) {
-		} finally {
-			lock.unlock();
-		}
-	}
+    public synchronized void consume() {
+        lock.lock();
+        try {
+            while (product <= 0) {
+                condition.await();
+                System.out.println("缺货");
+            }
+            System.out.println(Thread.currentThread().getName() + ":" + --product);
+            condition.signalAll();
+        } catch (InterruptedException e) {
+        } finally {
+            lock.unlock();
+        }
+    }
 }
 
 
 class Producer implements Runnable {
-	private Clerk clerk;
+    private Clerk clerk;
 
-	public Producer(Clerk clerk) {
-		this.clerk = clerk;
-	}
+    public Producer(Clerk clerk) {
+        this.clerk = clerk;
+    }
 
-	@Override
-	public void run() {
-		for (int i = 0; i < 10; i++) {
-			clerk.produce();
-		}
-	}
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            clerk.produce();
+        }
+    }
 }
 
 class Consumer implements Runnable {
-	private Clerk clerk;
+    private Clerk clerk;
 
-	public Consumer(Clerk clerk) {
-		this.clerk = clerk;
-	}
+    public Consumer(Clerk clerk) {
+        this.clerk = clerk;
+    }
 
-	@Override
-	public void run() {
-		for (int i = 0; i < 10; i++) {
-			clerk.consume();
-		}
-	}
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            clerk.consume();
+        }
+    }
 }
 ```
 
@@ -165,57 +165,57 @@ class Consumer implements Runnable {
 ```sql
 public class Demo2 {
 
-	public static void main(String[] args) {
-		Print print = new Print();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < 26; i++) {
-					print.printNumber();
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < 26; i++) {
-					print.printCharacter();
-				}
+    public static void main(String[] args) {
+        Print print = new Print();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 26; i++) {
+                    print.printNumber();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 26; i++) {
+                    print.printCharacter();
+                }
 
-			}
-		}).start();
-	}
+            }
+        }).start();
+    }
 }
 
 class Print {
 
-	private int number = 1;
-	private char aChar = 'A';
+    private int number = 1;
+    private char aChar = 'A';
 
-	public synchronized void printNumber() {
-		try {
-			System.out.print(number++);
-			System.out.print(number++);
-			notifyAll();
-			if (number <= 52) {
-				wait();
-			}
+    public synchronized void printNumber() {
+        try {
+            System.out.print(number++);
+            System.out.print(number++);
+            notifyAll();
+            if (number <= 52) {
+                wait();
+            }
 
 
-		} catch (InterruptedException e) {
-		}
-	}
+        } catch (InterruptedException e) {
+        }
+    }
 
-	public synchronized void printCharacter() {
-		try {
-			System.out.println(aChar++);
-			notifyAll();
-			if (aChar <= 'Z') {
-				wait();
-			}
-		} catch (InterruptedException e) {
-		}
-	}
+    public synchronized void printCharacter() {
+        try {
+            System.out.println(aChar++);
+            notifyAll();
+            if (aChar <= 'Z') {
+                wait();
+            }
+        } catch (InterruptedException e) {
+        }
+    }
 }
 
 ```
@@ -227,88 +227,88 @@ class Print {
 ```sql
 public class Demo3 {
 
-	public static void main(String[] args) {
-		AlternateDemo alternateDemo = new AlternateDemo();
-		new Thread(() -> {
-			for (int i = 0; i < 10; i++) {
-				alternateDemo.loopA();
-			}
-		}, "A").start();
-		new Thread(() -> {
-			for (int i = 0; i < 10; i++) {
-				alternateDemo.loopB();
-			}
-		}, "B").start();
-		new Thread(() -> {
-			for (int i = 0; i < 10; i++) {
-				alternateDemo.loopC();
-			}
-		}, "C").start();
-	}
+    public static void main(String[] args) {
+        AlternateDemo alternateDemo = new AlternateDemo();
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                alternateDemo.loopA();
+            }
+        }, "A").start();
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                alternateDemo.loopB();
+            }
+        }, "B").start();
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                alternateDemo.loopC();
+            }
+        }, "C").start();
+    }
 
 }
 
 class AlternateDemo {
 
-	private int number = 1;
+    private int number = 1;
 
-	private Lock lock = new ReentrantLock();
-	private Condition conditionA = lock.newCondition();
-	private Condition conditionB = lock.newCondition();
-	private Condition conditionC = lock.newCondition();
+    private Lock lock = new ReentrantLock();
+    private Condition conditionA = lock.newCondition();
+    private Condition conditionB = lock.newCondition();
+    private Condition conditionC = lock.newCondition();
 
-	public void loopA() {
-		lock.lock();
+    public void loopA() {
+        lock.lock();
 
-		try {
-			if (number != 1) {
-				conditionA.await();
-			}
+        try {
+            if (number != 1) {
+                conditionA.await();
+            }
 
-			System.out.println(Thread.currentThread().getName() + ":" + number);
+            System.out.println(Thread.currentThread().getName() + ":" + number);
 
-			number = 2;
-			conditionB.signal();
-		} catch (Exception e) {
-		} finally {
-			lock.unlock();
-		}
-	}
+            number = 2;
+            conditionB.signal();
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public void loopB() {
-		lock.lock();
+    public void loopB() {
+        lock.lock();
 
-		try {
-			if (number != 2) {
-				conditionB.await();
-			}
+        try {
+            if (number != 2) {
+                conditionB.await();
+            }
 
-			System.out.println(Thread.currentThread().getName() + ":" + number);
+            System.out.println(Thread.currentThread().getName() + ":" + number);
 
-			number = 3;
-			conditionC.signal();
-		} catch (Exception e) {
-		} finally {
-			lock.unlock();
-		}
-	}
+            number = 3;
+            conditionC.signal();
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public void loopC() {
-		lock.lock();
+    public void loopC() {
+        lock.lock();
 
-		try {
-			if (number != 3) {
-				conditionC.await();
-			}
+        try {
+            if (number != 3) {
+                conditionC.await();
+            }
 
-			System.out.println(Thread.currentThread().getName() + ":" + number);
+            System.out.println(Thread.currentThread().getName() + ":" + number);
 
-			number = 1;
-			conditionA.signal();
-		} catch (Exception e) {
-		} finally {
-			lock.unlock();
-		}
-	}
+            number = 1;
+            conditionA.signal();
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
 }
 ```
