@@ -54,11 +54,23 @@ char [] smallArray = new char [10];while (buffer.hasRemaining( )) {	int length
 char [] myArray = new char [100];CharBuffer charbuffer = CharBuffer.wrap (myArray);
 ```
 
-## 通道（Channel）
+## 2 通道（Channel）
 
 ![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/nio/nio_4.jpg)
 
 ### 2.1 获取通道
+
+获取通道的一种方式是对支持通道的对象调用getChannel()方法。支持通道的类：
+
+- FileInputStream
+- FileOutputStream
+- RandomAccessFile
+- DatagramSocket
+- Socket
+- ServerSocket
+
+获取通道的其他方式是使用Files类的静态方法newByteChannel()获取字节通道。或者通过通道的静态方法open() 打开并返回指定通道
+
 
 ```java
 SocketChannel sc = SocketChannel.open();sc.connect (new InetSocketAddress ("somehost", someport));
@@ -70,3 +82,88 @@ FileInputStream fis = new FileInputStream();
 FileChannel fs = fis.getChannel();
 
 ```
+
+### 2.2 通道数据传输
+
+- 将Buffer中数据写入Channel<br> int bytesWritten = inChannel.write(buf);
+- 从Channel读取数据到Buffer<br> int bytesRead = inChannel.read(buf);
+
+### 2.3 分散（Scatter）和聚集（Gather）
+- 分散读取（Scattering Reads）是指从Channel中读取的数据“分散”到多个Buffer中
+
+```java
+ByteBuffer header = ByteBuffer.allocate(128);
+ByteBuffer body   = ByteBuffer.allocate(1024);
+
+ByteBuffer[] bufferArray = { header, body };
+
+channel.read(bufferArray);
+```
+
+按照缓冲区的顺序，从Channel中读取的数据依次将Buffer填满
+
+- 聚集写入（Gathering Writes）是指将多个Buffer中的数据“聚集”到Channel
+
+```java
+ByteBuffer header = ByteBuffer.allocate(128);
+ByteBuffer body   = ByteBuffer.allocate(1024);
+
+//write data into buffers
+
+ByteBuffer[] bufferArray = { header, body };
+
+channel.write(bufferArray);
+```
+
+按照缓冲区的顺序，写入position和limit之间的数据到Channel
+
+### 2.4 Channel to Channel
+
+**transferFrom()**
+
+FileChannel.transferFrom方法把数据从通道源传输到FileChannel：
+
+```java
+RandomAccessFile fromFile = new RandomAccessFile("fromFile.txt", "rw");
+FileChannel      fromChannel = fromFile.getChannel();
+
+RandomAccessFile toFile = new RandomAccessFile("toFile.txt", "rw");
+FileChannel      toChannel = toFile.getChannel();
+
+long position = 0;
+long count    = fromChannel.size();
+
+toChannel.transferFrom(fromChannel, position, count);
+```
+
+**transferTo()**
+
+transferTo方法把FileChannel数据传输到另一个channel
+
+```java
+RandomAccessFile fromFile = new RandomAccessFile("fromFile.txt", "rw");
+FileChannel      fromChannel = fromFile.getChannel();
+
+RandomAccessFile toFile = new RandomAccessFile("toFile.txt", "rw");
+FileChannel      toChannel = toFile.getChannel();
+
+long position = 0;
+long count    = fromChannel.size();
+
+fromChannel.transferTo(position, count, toChannel);
+```
+
+### 2.5 常用方法
+
+方法     | 描述
+------- | ------int read(ByteBuffer dst) | 从 Channel 中读取数据到 ByteBufferlong read(ByteBuffer[] dsts) | 将 Channel 中的数据“分散”到 ByteBuffer[]int write(ByteBuffer src)     | 将 ByteBuffer 中的数据写入到 Channellong write(ByteBuffer[] srcs) | 将 ByteBuffer[] 中的数据“聚集”到 Channellong position()              | 返回此通道的文件位置FileChannel position(long p) | 设置此通道的文件位置long size()                  | 返回此通道的文件的当前大小FileChannel truncate(long s) | 将此通道的文件截取为给定大小void force(boolean metaData) | 强制将所有对此通道的文件更新写入到存储设备中
+
+## 3 选择器（Selector）
+
+
+
+
+
+
+<br>
+参考 ： http://wiki.jikexueyuan.com/project/java-nio-zh/java-nio-selector.html

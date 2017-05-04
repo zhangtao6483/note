@@ -86,7 +86,7 @@ class Consumer implements Runnable {
 
 ### 1.2 lock实现
 
-```sql
+```java
 class Clerk {
     private Lock lock = new ReentrantLock();
     private Condition condition = lock.newCondition();
@@ -162,7 +162,7 @@ class Consumer implements Runnable {
 
 一个线程打印 1~52，另一个线程打印字母A-Z。打印顺序为12A34B56C……5152Z。
 
-```sql
+```java
 public class Demo2 {
 
     public static void main(String[] args) {
@@ -224,7 +224,7 @@ class Print {
 
 启动3个线程打印递增的数字, 线程1先打印1,2,3,4,5, 然后是线程2打印6,7,8,9,10, 然后是线程3打印11,12,13,14,15. 接着再由线程1打印16,17,18,19,20....以此类推, 直到打印到75.
 
-```sql
+```java
 public class Demo3 {
 
     public static void main(String[] args) {
@@ -312,3 +312,10 @@ class AlternateDemo {
     }
 }
 ```
+
+## 3 CyclicBarrier
+
+允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)
+<br>barrier 在释放等待线程后可以重用
+
+### 3.1 
