@@ -56,7 +56,7 @@ public class Singleton {
     private Singleton(){}
     public static Singleton getInstance(){
         if(singleton == null){ //如果singleton为空，表明未实例化
-           synchronize (Singleton.class){
+           synchronized (Singleton.class){
                if( singleton == null ) { // double check 进来判断后再实例化。
                    singleton = new Singleton();
                }
@@ -98,3 +98,40 @@ private void readObjectNoData() throws ObjectStreamException {
         throw new InvalidObjectException("can't deserialize enum");  
 }  
 ```
+
+## 代码示例
+
+在Spring中，bean可以被定义为两种模式：prototype（多例）和singleton（单例）
+<br>
+**singleton（单例）**：scope="singleton",只有一个共享的实例存在，所有对这个bean的请求都会返回这个唯一的实例。
+<br>
+**prototype（多例）**：scope="prototype",对这个bean的每次请求都会创建一个新的bean实例。
+<br>
+Spring bean 默认是单例模式。
+
+**实现代码：**
+
+```java
+
+private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(256);
+
+
+protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+	Object singletonObject = this.singletonObjects.get(beanName);
+	if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+		synchronized (this.singletonObjects) {
+			singletonObject = this.earlySingletonObjects.get(beanName);
+			if (singletonObject == null && allowEarlyReference) {
+				ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+				if (singletonFactory != null) {
+					singletonObject = singletonFactory.getObject();
+					this.earlySingletonObjects.put(beanName, singletonObject);
+					this.singletonFactories.remove(beanName);
+				}
+			}
+		}
+	}
+	return (singletonObject != NULL_OBJECT ? singletonObject : null);
+}
+```
+
