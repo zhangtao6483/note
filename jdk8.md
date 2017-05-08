@@ -18,43 +18,43 @@ Predicate接口非常适用于做过滤。
 ```java
 
 public static void main(String[] args) {
-	List languages = Arrays.asList("Java", "Scala", "C++", "Haskell", "Lisp");
+    List languages = Arrays.asList("Java", "Scala", "C++", "Haskell", "Lisp");
 
-	System.out.println("Languages which starts with J :");
-	filter(languages, (str) -> str.startsWith("J"));
+    System.out.println("Languages which starts with J :");
+    filter(languages, (str) -> str.startsWith("J"));
 
-	System.out.println("Print no language : ");
-	filter(languages, (str) -> false);
+    System.out.println("Print no language : ");
+    filter(languages, (str) -> false);
 
-	System.out.println("Print language whose length greater than 4:");
-	filter(languages, (str) -> str.length() > 4);
+    System.out.println("Print language whose length greater than 4:");
+    filter(languages, (str) -> str.length() > 4);
 }
 
 public static void filter(List<String> names, Predicate<String> condition) {
-	for (String name : names) {
-		if (condition.test(name)) {
-			System.out.println(name + " ");
-		}
-	}
+    for (String name : names) {
+        if (condition.test(name)) {
+            System.out.println(name + " ");
+        }
+    }
 }
 
-//	Languages which starts with J :
-//	Java
-//	Print no language :
-//	Print language whose length greater than 4:
-//	Scala 
-//	Haskell
+//    Languages which starts with J :
+//    Java
+//    Print no language :
+//    Print language whose length greater than 4:
+//    Scala 
+//    Haskell
 ```
 
 lambda表达式使用Predicate
 
 ```java
 Predicate<String> startsWithJ = (n) -> n.startsWith("J");
-		Predicate<String> fourLetterLong = (n) -> n.length() == 4;
-		languages.stream()
-				.filter(startsWithJ.and(fourLetterLong))
-				.forEach((n) -> System.out.print("nName, which starts with 'J' and four letter long is : " + n));
-				
+        Predicate<String> fourLetterLong = (n) -> n.length() == 4;
+        languages.stream()
+                .filter(startsWithJ.and(fourLetterLong))
+                .forEach((n) -> System.out.print("nName, which starts with 'J' and four letter long is : " + n));
+                
 //nName, which starts with 'J' and four letter long is : Java
 ```
 
@@ -196,46 +196,46 @@ users.forEach(User::repair);
 
 ```java
 public class User {
-	private String name;
+    private String name;
 
-	private String age;
+    private String age;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getAge() {
-		return age;
-	}
+    public String getAge() {
+        return age;
+    }
 
-	public void setAge(String age) {
-		this.age = age;
-	}
+    public void setAge(String age) {
+        this.age = age;
+    }
 
-	public static void collide(final User user) {
-		System.out.println("Collided " + user.getName());
-	}
+    public static void collide(final User user) {
+        System.out.println("Collided " + user.getName());
+    }
 
-	public void follow(final User another) {
-		System.out.println("Following the " + another.getName());
-	}
+    public void follow(final User another) {
+        System.out.println("Following the " + another.getName());
+    }
 
-	public void repair() {
-		System.out.println("Repaired " + this.toString());
-	}
+    public void repair() {
+        System.out.println("Repaired " + this.toString());
+    }
 }
 ```
 ```java
 import java.util.function.Supplier;
 
 public interface CreateFactory {
-	static <T> T create(final Supplier<T> supplier) {
-		return supplier.get();
-	}
+    static <T> T create(final Supplier<T> supplier) {
+        return supplier.get();
+    }
 }
 ``` 
 ```java
@@ -243,6 +243,131 @@ User user = CreateFactory.create(User::new);
 user.setName("Neal");
 user.setAge("20");
 List<User> users = Arrays.asList(user);
+```
+
+---
+
+### 实现Builder模式
+
+```java
+public class GenericBuilder<T> {
+    private final Supplier<T> instantiator;
+    private List<Consumer<T>> instantiatorModifiers = new ArrayList<>();
+    private List<Consumer<T>> keyValueModifiers = new ArrayList<>();
+
+
+    public GenericBuilder(Supplier<T> instantiator) {
+        this.instantiator = instantiator;
+    }
+
+    public static <T> GenericBuilder<T> of(Supplier<T> instantiator) {
+        return new GenericBuilder<T>(instantiator);
+    }
+
+    public <U> GenericBuilder<T> with(BiConsumer<T, U> consumer, U value) {
+        Consumer<T> c = instantiator -> consumer.accept(instantiator, value);
+        instantiatorModifiers.add(c);
+        return this;
+    }
+
+    public <K, V> GenericBuilder<T> with(KeyValueConsumer<T, K, V> consumer, K key, V value) {
+        Consumer<T> c = instantiator -> consumer.accept(instantiator, key, value);
+        keyValueModifiers.add(c);
+        return this;
+    }
+
+    public T build() {
+        T value = instantiator.get();
+        instantiatorModifiers.forEach(modifier -> modifier.accept(value));
+        keyValueModifiers.forEach(keyValueModifiers -> keyValueModifiers.accept(value));
+        instantiatorModifiers.clear();
+        keyValueModifiers.clear();
+        return value;
+    }
+}
+
+```
+
+```java
+
+@FunctionalInterface
+public interface KeyValueConsumer<T, K, V> {
+
+    void accept(T t, K k, V v);
+
+    default KeyValueConsumer<T, K, V> andThen(KeyValueConsumer<? super T, ? super K, ? super V> after) {
+        Objects.requireNonNull(after);
+
+        return (t, k, v) -> {
+            accept(t, k, v);
+            after.accept(t, k, v);
+        };
+    }
+}
+
+```
+
+```java
+
+public class Order {
+    private String code;
+    private List<String> offers;
+    private Map<String, Object> features;
+
+    public void addOffer(String offer) {
+        offers = Optional.ofNullable(offers).orElseGet(ArrayList::new);
+        offers.add(offer);
+    }
+
+    public <T> void addFeature(String key, T value) {
+        features = Optional.ofNullable(features).orElseGet(HashMap::new);
+        features.put(key, value);
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "code='" + code + '\'' +
+                ", offers=" + offers +
+                ", features=" + features +
+                '}';
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public List<String> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<String> offers) {
+        this.offers = offers;
+    }
+
+    public Map<String, Object> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(Map<String, Object> features) {
+        this.features = features;
+    }
+
+    public static void main(String[] args) {
+        Order order = GenericBuilder.of(Order::new)
+                .with(Order::setCode, "code")
+                .with(Order::addOffer, "order")
+                .with(Order::addFeature, "category", "book")
+                .build();
+
+        System.out.println(order);
+    }
+}
+
 ```
 
 ## 默认方法
