@@ -153,6 +153,11 @@ backlogItem.commitTo(sprint);
 
 # 领域，子域，限界上下文
 
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_1.png)
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_2.png)
+
+
 领域（Domain）即是一个组织所做的事情以及其中所包含的一切
 
 子域：
@@ -166,18 +171,35 @@ backlogItem.commitTo(sprint);
 
 # 上下文映射图
 
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_3.png)
+
+
 # 架构
 
-分层架构模型
+## 分层架构模型
+
 DDD系统所采用的传统分层架构，其中核心域只位于架构中的其中一层，其上层为**用户界面层（User Interface）** 和 **应用（Application Layer）**，其下层是**基础设施层（Infrastructure layer）**
 
-严格分层架构（Strict Layers Architecture）,某层只能与直接位于下方的层发生耦合
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_4.png)
+
+
+严格分层架构（Strict Layers Architecture）,某层只能与直接位于下方的层发生耦合<br>
 松散分层架构（Relaxed Layers Architecture）,允许任意上方层与任意下方层发生耦合
 
 **依赖倒置原则**
 > 高层模块不应该依赖于底层模块，两者都应该依赖于对象
 > 抽象不应该依赖于细节，细节应该依赖于抽象
 
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_5.png)
 
+## 六边形架构（端口和适配器）
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_6.png)
+
+## 面向服务架构（Service-Oriented Architecture， SOA）
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_7.png)
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_8.png)
 
 
