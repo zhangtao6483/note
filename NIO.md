@@ -160,10 +160,59 @@ fromChannel.transferTo(position, count, toChannel);
 
 ## 3 选择器（Selector）
 
+选择器(Selector) 是 SelectableChannle 对象的多路复用器，Selector 可 以同时监控多个 SelectableChannel 的 IO 状况，也就是说，利用 Selector 可使一个单独的线程管理多个 Channel。Selector 是非阻塞 IO 的核心。
 
+### 3.1 Selector应用
 
+- 创建 Selector :通过调用 Selector.open() 方法创建一个 Selector 
 
+```java
+// 创建Selector
+Selector selector = Selector.open();
+```
 
+- 向选择器注册通道:SelectableChannel.register(Selector sel, int ops)
+
+```java
+// 创建一个Socket套接字
+Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 9898);
+
+// 获取SocketChannel
+SocketChannel channel = socket.getChannel();
+
+// 创建选择器
+Selector selector = Selector.open();
+
+// 将SocketChannel 切换到非阻塞模式
+channel.configureBlocking(false);
+
+// 向Selector注册Channel
+SelectionKey key = channel.register(selector, SelectionKey.OP_READ);
+
+```
+
+- 可以监听的事件类型(可使用 SelectionKey 的四个常量表示): 
+  - 读 : SelectionKey.OP_READ (1)  - 写 : SelectionKey.OP_WRITE (4) 
+  - 连接 : SelectionKey.OP_CONNECT (8) 
+  - 接收 : SelectionKey.OP_ACCEPT (16)
+
+- 若注册时不止监听一个事件，则可以使用“位或”操作符连接
+
+### 3.2 SelectionKey
+
+SelectionKey:表示 SelectableChannel 和 Selector 之间的注册关系。每次向选择器注册通道时就会选择一个事件(选择键)。选择键包含两个表示为整数值的操作集。操作集的每一位都表示该键的通道所支持的一类可选择操作。<br>
+**SelectionKey常用方法**
+<br>
+
+方法 | 描述
+--- | ---int interestOps() | 获取感兴趣事件集合int readyOps() | 获取通道已经准备就绪的操作的集合SelectableChannel channel() | 获取注册通道Selector selector() | 返回选择器boolean isReadable() | 检测 Channal 中读事件是否就绪boolean isWritable() | 检测 Channal 中写事件是否就绪boolean isConnectable() | 检测 Channel 中连接是否就绪boolean isAcceptable() | 检测 Channel 中接收是否就绪
+
+<br>
+**Selector常用方法**
+<br>
+
+方法  |  描述
+---  | ---Set<SelectionKey> keys() | 所有的 SelectionKey 集合。代表注册在该Selector上的ChannelselectedKeys() | 被选择的 SelectionKey 集合。返回此Selector的已选择键集int select() | 监控所有注册的Channel，当它们中间有需要处理的 IO 操作时， 该方法返回，并将对应得的 SelectionKey 加入被选择的 SelectionKey 集合中，该方法返回这些 Channel 的数量。int select(long timeout) | 可以设置超时时长的 select() 操作int selectNow() | 执行一个立即返回的 select() 操作，该方法不会阻塞线程Selector wakeup() | 使一个还未返回的 select() 方法立即返回void close() | 关闭该选择器
 
 <br>
 参考 ： http://wiki.jikexueyuan.com/project/java-nio-zh/java-nio-selector.html
