@@ -5,7 +5,8 @@
 
 类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载、验证、准备、解析、初始化、使用和卸载七个阶段。
 
-![enter image description here](http://dl.iteye.com/upload/picture/pic/115598/fc2d8dab-9a09-3c4a-bc16-83eac314aa51.jpg)
+
+![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/jvm/2.jpg)
 
 类加载的过程包括了加载、验证、准备、解析、初始化五个阶段。
 

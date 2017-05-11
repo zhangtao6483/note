@@ -213,3 +213,8 @@ CQRS是将紧缩（Stringent）对象设计原则和命令-查询分离（CQS）
 ## 事件驱动架构
 
 ![Alt text](https://raw.githubusercontent.com/zhangtao6483/note/master/img/ddd/ddd_9.png)
+
+### 长时处理过程
+
+# 实体
+
