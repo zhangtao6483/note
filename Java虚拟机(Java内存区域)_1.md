@@ -109,6 +109,15 @@ JDK 8.HotSpot JVM开始使用本地化的内存存放类的元数据，这个空
 | 虚拟机栈和本地方法栈    |   递归、无限循环创建线程							      |
 
 
+Minor GC触发条件：当Eden区满时，触发Minor GC。
+
+Full GC触发条件：
+
+1. 调用System.gc时，系统建议执行Full GC，但是不必然执行
+2. 老年代空间不足
+3. 方法区空间不足
+4. 通过Minor GC后进入老年代的平均大小大于老年代的可用内存
+5. 由Eden区、From Space区向To Space区复制时，对象大小大于To Space可用内存，则把该对象转存到老年代，且老年代的可用内存小于该对象大小
 
 参考资料：
 http://www.importnew.com/19946.html
