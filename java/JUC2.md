@@ -173,5 +173,24 @@ hreadPoolExecutor的完整构造方法类型是：<br>ThreadPoolExecutor(int cor
 
 ## ConcurrentHashMap
 
+jdk1.7
+
+- ConcurrentHashMap采用分段锁的机制，实现并发的更新操作，底层采用数组和链表的存储结构。
+- 其包含两个核心静态内部类 Segment和HashEntry。Segment继承ReentrantLock用来充当锁的角色，每个 Segment 对象守护每个散列映射表的若干个桶。HashEntry 用来封装映射表的键 / 值对；
+- 每个桶是由若干个 HashEntry 对象链接起来的链表。
+
+JDK1.8
+
+- 利用CAS+Synchronized来保证并发更新的安全，底层采用数组和链表/红黑树的存储结构。
+
+- 1.8中使用一个volatile类型的变量baseCount记录元素的个数，当插入新数据或则删除数据时，会通过addCount()方法更新baseCount
+
+## CountDownLatch
+
+- CountDownLatch 一个同步辅助类，在完成一组正在其他线程中执行的操作之前，它允许一个或多个线程一直等待。
+- 闭锁可以延迟线程的进度直到其到达终止状态，闭锁可以用来确保某些活 动直到其他活动都完成才继续执行
+  - 确保某个计算在其需要的所有资源都被初始化之后才继续执行;
+  - 确保某个服务在其依赖的所有其他服务都已经启动之后才启动;
+  - 等待直到某个操作所有参与者都准备就绪再继续执行。
 
 
