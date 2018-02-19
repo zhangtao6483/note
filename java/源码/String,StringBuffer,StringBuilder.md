@@ -70,17 +70,65 @@ public int hashCode() {
 - String.intern()是一个Native方法，底层调用C++的 StringTable::intern 方法
 - 当调用 intern 方法时，如果常量池中已经该字符串，则返回池中的字符串；否则将此字符串添加到常量池中，并返回字符串的引用。
 
----
-1. jdk6及之前版本中，常量池的内存在永久代PermGen进行分配，所以常量池会受到PermGen内存大小的限制。
-2. jdk7中，常量池的内存在Java堆上进行分配，意味着常量池不受固定大小的限制了。
-3. jdk8中，移除了永久代PermGen。
-
 ## 2. StringBuffer
+
+### 2.1 
+
+- 继承AbstractStringBuilder,使用char数组存储（ *char[] value;*）
+- 方法使用synchronized保证线程安全
+- toString()方法有toStringCache作为缓存，多次调用toString方法可以减少Arrays.copyOfRange的操作<br>
+
+```
+private transient char[] toStringCache;
+
+public synchronized String toString() {
+    if (toStringCache == null) {
+        toStringCache = Arrays.copyOfRange(value, 0, count);
+    }
+    return new String(toStringCache, true);
+}
+```
+
+### 2.2 扩容
+
+- 默认的初始化容量16
+- 如果用指定的String对象进行初始化则是将字符串的长度+16作为初始化的容量大小
+- append一个空指针的时候会添加’n','u','l','l'四个字符，长度也同样增加4
+- 每次需要扩容的时候都是按照"旧容量*2+2"进行扩容，如果扩容之后仍不满足所需容量，则直接扩容到所需容量
+
+```java
+void expandCapacity(int minimumCapacity) {
+    int newCapacity = value.length * 2 + 2;
+    if (newCapacity - minimumCapacity < 0)
+        newCapacity = minimumCapacity;
+    if (newCapacity < 0) {
+        if (minimumCapacity < 0) // overflow
+            throw new OutOfMemoryError();
+        newCapacity = Integer.MAX_VALUE;
+    }
+    value = Arrays.copyOf(value, newCapacity);
+}
+```
 
 ## 3. StringBuilder
 
+### 3.1 
+
+- 字符串变量（非final修饰）通过 "+" 进行拼接，在编译过程中会转化为StringBuilder对象的append操作
+- String str1 = "te"; String str2 = "st"; String str3 = sttr1 + str2 == new StringBuilder().append(str1).append(str2);
+- 在for循环中，千万不要使用 "+" 进行字符串拼接，每次循环都会重新初始化StringBuilder对象，导致性能问题的出现。
+
 ## 4. 
 
-**性能方面**：StringBuilder > StringBuffer > String (+) (for循环里字符串拼接)
-**线程安全**：StringBuilder（非线程安全，速度快），StringBuffer（线程安全，速度慢）
+**性能方面**：StringBuilder > StringBuffer > String (+) (for循环里字符串拼接)<br>
+**线程安全**：StringBuilder（非线程安全，速度快），StringBuffer（线程安全，速度慢）<br>
 
+- 连接2或3个String时，使用String.concat();
+- 如果连接多于3个String，并且能够精确预测出结果里的长度，使用StringBuilder/StringBuffer，并且初始化容量
+- 如果连接多于3个String，但是不能精确预测出最终结果的长度，使用StringBundler。*StringBundler在append()的时候，不急着往char[]里塞东西，而是先拿一个String[]把它们都存起来，到了最后才把所有String的length加起来，构造一个合理长度的StringBuilder。*
+
+
+## 5. 参考
+http://calvin1978.blogcn.com/articles/stringbuilder.html<br>
+https://www.jianshu.com/p/160c9be0b132<br>
+http://rednaxelafx.iteye.com/blog/774673
