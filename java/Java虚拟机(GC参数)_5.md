@@ -54,7 +54,9 @@
   
 - 这两个参数是矛盾的。因为停顿时间和吞吐量不可能同时调优
 
-## 3 CMS
+## 3 并发收集器
+
+### 3.1 CMS
 
 - -XX:+UseConcMarkSweepGC
 - Concurrent Mark Sweep 并发标记清除
@@ -62,7 +64,7 @@
 - 并发阶段会降低吞吐量
 - 老年代收集器（新生代使用ParNew）
 
-### 3.1 过程
+#### 3.1.1 过程
 
 - 初始标记
 
@@ -81,7 +83,7 @@
 
   - 基于标记结果，直接清理对象
 
-### 3.2 特点
+#### 3.1.2 特点
 
 - 尽可能降低停顿
 - 会影响系统整体吞吐量和性能
@@ -91,12 +93,18 @@
   - -XX:CMSInitiatingOccupancyFraction设置触发GC的阈值
 如果不幸内存预留空间不够，就会引起concurrent mode failure
 
-### 3.4 参数
+#### 3.1.3 参数
 
 - -XX:+UseCMSCompactAtFullCollection Full GC后，进行一次整理<br>整理过程是独占的，会引起停顿时间变长
 - -XX:+CMSFullGCsBeforeCompaction <br>设置进行几次Full GC后，进行一次碎片整理
 - -XX:ParallelCMSThreads<br>设定CMS的线程数量
 
-## 4 G1
+### 3.2 G1
 
+- -XX:+UseG1GC
+- G1垃圾收集算法主要应用在多CPU大内存的服务中，在满足高吞吐量的同时，竟可能的满足垃圾回收时的暂停时间，该设计主要针对如下应用场景：
+- 垃圾收集线程和应用线程并发执行，和CMS一样
+- 空闲内存压缩时避免冗长的暂停时间
+- 不希望牺牲太多的吞吐性能
+- 不需要很大的Java堆
 
