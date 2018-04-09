@@ -40,8 +40,8 @@ public final boolean compareAndSet(int expect, int update) {
 > intel手册对lock前缀的说明如下：<br>
 > 1. 确保后续指令执行的原子性。
 Intel使用缓存锁定来保证指令执行的原子性，缓存锁定将大大降低lock前缀指令的执行开销。<br>
-2. 禁止该指令与前面和后面的读写指令重排序。<br>
-3. 把写缓冲区的所有数据刷新到内存中。
+> 2. 禁止该指令与前面和后面的读写指令重排序。<br>
+> 3. 把写缓冲区的所有数据刷新到内存中。
 
 - weakCompareAndSet：不会保证happen-before关系<br>
 jdk8之前实现与compareAndSet相同<br>
