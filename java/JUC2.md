@@ -6,6 +6,14 @@ JUC2
 - Java 提供了一种稍弱的同步机制，即 volatile 变量，用来确保将变量的更新操作通知到其他线程。可以将 volatile 看做一个轻量级的锁，但是又与锁有些不同:
   - 对于多线程，不是一种互斥关系
   - 不能保证变量状态的“原子性操作” eg: i=i+1;
+- volatile修饰的变量如果是对象或数组之类的，其含义是对象或数组的地址具有可见性，但是数组或对象内部的成员改变不具备可见性<br>
+CurrentHashMap使用Unsafe.getObjectVolatile表达元素为volatile的
+
+```java
+static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
+    return (Node<K,V>)U.getObjectVolatile(tab, ((long)i << ASHIFT) + ABASE);
+}
+```
 
 重排序
 
