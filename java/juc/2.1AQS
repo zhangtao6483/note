@@ -9,11 +9,13 @@
   - PROPAGATE，值为-3，表示当前场景下后续的acquireShared能够得以执行；
   - 0 值为0，表示当前节点在sync队列中，等待着获取锁。
 
-| 方法名称	| 描述 |
-|:------------- |: -------------|
-|protected boolean tryAcquire(int arg)	| 排它的获取这个状态。这个方法的实现需要查询当前状态是否允许获取，然后再进行获取（使用compareAndSetState来做）状态。|
-|protected boolean tryRelease(int arg) 	| 释放状态。|
-|protected int tryAcquireShared(int arg)	| 共享的模式下获取状态。|
-|protected boolean tryReleaseShared(int arg)	| 共享的模式下释放状态。|
-|protected boolean isHeldExclusively()	| 在排它模式下，状态是否被占用。|
+ 方法名称	| 描述 
+------------- | -------------
+boolean tryAcquire(int arg)	| 尝试获取独占锁
+boolean tryRelease(int arg) 	| 尝试释放独占锁
+int tryAcquireShared(int arg)	| 尝试获取共享锁
+boolean tryReleaseShared(int arg)	| 尝试释放共享锁
+boolean isHeldExclusively()	| 当前线程是否获得了独占锁
+
+
 
