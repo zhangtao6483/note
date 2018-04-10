@@ -1,0 +1,17 @@
+# 1 AbstractQueuedSynchronizer
+
+- 依赖于一个CLH队列来管理锁，Node维护了线程和的线程的状态
+- CLH锁也是一种基于链表的可扩展、高性能、公平的自旋锁，申请线程只在本地变量上自旋，它不断轮询前驱的状态，如果发现前驱释放了锁就结束自旋。
+  
+  - CANCELLED，值为1，表示当前的线程被取消；
+  - SIGNAL，值为-1，表示当前节点的后继节点包含的线程需要运行，也就是unpark；
+  - CONDITION，值为-2，表示当前节点在等待condition，也就是在condition队列中；
+  - PROPAGATE，值为-3，表示当前场景下后续的acquireShared能够得以执行；
+  - 0 值为0，表示当前节点在sync队列中，等待着获取锁。
+
+| 方法名称	| 描述 |
+|protected boolean tryAcquire(int arg)	| 排它的获取这个状态。这个方法的实现需要查询当前状态是否允许获取，然后再进行获取（使用compareAndSetState来做）状态。|
+|protected boolean tryRelease(int arg) 	| 释放状态。|
+|protected int tryAcquireShared(int arg)	| 共享的模式下获取状态。|
+|protected boolean tryReleaseShared(int arg)	| 共享的模式下释放状态。|
+|protected boolean isHeldExclusively()	| 在排它模式下，状态是否被占用。|
