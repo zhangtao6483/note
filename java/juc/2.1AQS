@@ -10,9 +10,10 @@
   - 0 值为0，表示当前节点在sync队列中，等待着获取锁。
 
 | 方法名称	| 描述 |
-|------------- | -------------|
+|:------------- |: -------------|
 |protected boolean tryAcquire(int arg)	| 排它的获取这个状态。这个方法的实现需要查询当前状态是否允许获取，然后再进行获取（使用compareAndSetState来做）状态。|
 |protected boolean tryRelease(int arg) 	| 释放状态。|
 |protected int tryAcquireShared(int arg)	| 共享的模式下获取状态。|
 |protected boolean tryReleaseShared(int arg)	| 共享的模式下释放状态。|
 |protected boolean isHeldExclusively()	| 在排它模式下，状态是否被占用。|
+
