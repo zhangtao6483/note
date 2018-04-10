@@ -7,7 +7,7 @@ JUC2
   - 对于多线程，不是一种互斥关系
   - 不能保证变量状态的“原子性操作” eg: i=i+1;
 - volatile修饰的变量如果是对象或数组之类的，其含义是对象或数组的地址具有可见性，但是数组或对象内部的成员改变不具备可见性<br>
-CurrentHashMap使用Unsafe.getObjectVolatile表达元素为volatile的
+ConcurrentHashMap使用Unsafe.getObjectVolatile表达元素为volatile的
 
 ```java
 static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
