@@ -3,7 +3,9 @@ JUC2
 ## volatile 变量
 
 - 内存可见性(Memory Visibility)是指当某个线程正在使用对象状态 而另一个线程在同时修改该状态，需要确保当一个线程修改了对象 状态后，其他线程能够看到发生的状态变化。
-- Java 提供了一种稍弱的同步机制，即 volatile 变量，用来确保将变量的更新操作通知到其他线程。可以将 volatile 看做一个轻量级的锁，但是又与锁有些不同:  - 对于多线程，不是一种互斥关系  - 不能保证变量状态的“原子性操作”
+- Java 提供了一种稍弱的同步机制，即 volatile 变量，用来确保将变量的更新操作通知到其他线程。可以将 volatile 看做一个轻量级的锁，但是又与锁有些不同:
+  - 对于多线程，不是一种互斥关系
+  - 不能保证变量状态的“原子性操作”
 
 重排序
 
@@ -26,13 +28,16 @@ Public void reader() {
 }
 ```
   
+- volatile不能保证操作的原子性 eg: i=i+1;
 
 ## CAS操作
 
 - CAS (Compare-And-Swap) 是一种硬件对并发的支持，针对多处理器 操作而设计的处理器中的一种特殊指令，用于管理对共享数据的并发访问。
 - CAS 是一种无锁的非阻塞算法的实现。
 - CAS 包含了 3 个操作数:  
-  1. 需要读写的内存值 V  2. 进行比较的值 A  3. 拟写入的新值 B
+  1. 需要读写的内存值 V
+  2. 进行比较的值 A
+  3. 拟写入的新值 B
 - 当且仅当 V 的值等于 A 时，CAS 通过原子方式用新值 B 来更新 V 的值，否则不会执行任何操作。
 
 ```java
@@ -108,8 +113,12 @@ public class CasCounter {
 }
 ```
 
-- java.util.concurrent.atomic包下提供了一些原子操作的常用类:  - AtomicBoolean、AtomicInteger、AtomicLong、AtomicReference 
-  - AtomicIntegerArray、AtomicLongArray  - AtomicMarkableReference  - AtomicReferenceArray  - AtomicStampedReference
+- java.util.concurrent.atomic包下提供了一些原子操作的常用类:
+  - AtomicBoolean、AtomicInteger、AtomicLong、AtomicReference 
+  - AtomicIntegerArray、AtomicLongArray
+  - AtomicMarkableReference
+  - AtomicReferenceArray
+  - AtomicStampedReference
 
   
 - ABA问题
