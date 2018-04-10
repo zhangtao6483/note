@@ -4,7 +4,7 @@
 user classpath使用此注解默认是无效的，需要在jvm启动时设置-XX:-RestrictContended 
 - Cell类中仅有一个保存计数的变量value，并且为该变量提供了CAS操作方法
 
-longAccumulate/doubleAccumulate<br>
+### longAccumulate/doubleAccumulate<br>
 
 - 当没有竞争时，所有的更新都作用到 base 字段。
 - 根据第一次竞争（更新 base 的 CAS 失败），表被初始化为大小 2。表的大小根据更多的竞争加倍，直到大于或等于CPU数量的最小的 2 的幂。
