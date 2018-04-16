@@ -42,13 +42,13 @@ Designing Data-Intensive Application
 
 ### 简单性（Simplicity）
 
-​从系统中消除尽可能多的复杂度（complexity），使新工程师也能轻松理解系统。<br>
-​
-- ​简化系统并不一定意味着减少功能；它也可以意味着消除额外的（accidental）的复杂度。消除额外复杂度的最好工具之一是抽象（abstraction）
+从系统中消除尽可能多的复杂度（complexity），使新工程师也能轻松理解系统。
+
+- 简化系统并不一定意味着减少功能；它也可以意味着消除额外的（accidental）的复杂度。消除额外复杂度的最好工具之一是抽象（abstraction）
 
 ### 可演化性（Evolability）
 
-​使工程师在未来能轻松地对系统进行更改，当需求变化时为新应用场景做适配。
+使工程师在未来能轻松地对系统进行更改，当需求变化时为新应用场景做适配。
 
 - 敏捷（agile）开发为适应变化提供了一个框架。敏捷社区还开发了对在频繁变化的环境中开发软件很有帮助的技术工具和模式，如测试驱动开发（TDD, test-driven development）和重构（refactoring）。
 
